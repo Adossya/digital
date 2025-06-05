@@ -563,22 +563,18 @@ const close = document.querySelector('.header__close');
 
 
 
-
-
-
 const form = document.querySelector('.contacts__form');
 const nameInput = form.querySelector('input[name="entry.2059123062"]');
 const emailInput = form.querySelector('input[name="entry.161505263"]');
 const telegramInput = form.querySelector('input[name="entry.1731244058"]');
 
-// Находим соответствующие элементы сообщений об ошибке
+// Сообщения об ошибке
 const nameError = nameInput.parentElement.querySelector('.error-message');
 const emailError = emailInput.parentElement.querySelector('.error-message');
 const telegramError = telegramInput.parentElement.querySelector('.error-message');
 
 const notification = document.getElementById('form-notification');
 
-// Функции проверки
 function isValidName(value) {
   const regex = /^[A-Za-zА-ЩЬЮЯЄІЇҐа-щьюяєіїґ' -]+$/;
   return regex.test(value.trim());
@@ -589,12 +585,12 @@ function isValidEmail(email) {
   return emailRegex.test(email);
 }
 
-// Валидация при отправке формы
 form.addEventListener('submit', (e) => {
-  e.preventDefault(); // Отменяем стандартную отправку
+  e.preventDefault();
 
   let valid = true;
 
+  // Проверяем name
   if (!isValidName(nameInput.value)) {
     nameError.style.display = 'block';
     nameInput.classList.remove('valid');
@@ -606,6 +602,7 @@ form.addEventListener('submit', (e) => {
     nameInput.classList.add('valid');
   }
 
+  // Проверяем email
   if (!isValidEmail(emailInput.value)) {
     emailError.style.display = 'block';
     emailInput.classList.remove('valid');
@@ -617,6 +614,7 @@ form.addEventListener('submit', (e) => {
     emailInput.classList.add('valid');
   }
 
+  // Проверяем telegram
   if (telegramInput.value.trim() === "") {
     telegramError.style.display = 'block';
     telegramInput.classList.remove('valid');
@@ -628,9 +626,9 @@ form.addEventListener('submit', (e) => {
     telegramInput.classList.add('valid');
   }
 
-  if (!valid) return; // Если есть ошибки — не отправляем
+  if (!valid) return; // Если есть ошибки, не отправляем
 
-  // Отправляем форму вручную через fetch
+  // Отправляем форму
   const formData = new FormData(form);
   fetch(form.action, {
     method: 'POST',
@@ -638,16 +636,10 @@ form.addEventListener('submit', (e) => {
     mode: 'no-cors'
   }).then(() => {
     notification.style.display = 'block';
-
-    // Сбрасываем форму
     form.reset();
-
-    // Сбрасываем валидационные классы
     [nameInput, emailInput, telegramInput].forEach(input => {
       input.classList.remove('valid');
     });
-
-    // Убираем уведомление через 5 секунд
     setTimeout(() => {
       notification.style.display = 'none';
     }, 5000);
@@ -656,55 +648,51 @@ form.addEventListener('submit', (e) => {
   });
 });
 
-// Подсветка ошибок при вводе
+// Подсветка бордера при вводе, без текста
 nameInput.addEventListener('input', () => {
   if (isValidName(nameInput.value)) {
-    nameError.style.display = 'none';
     nameInput.classList.remove('error');
     nameInput.classList.add('valid');
   } else {
-    nameError.style.display = 'block';
     nameInput.classList.remove('valid');
     nameInput.classList.add('error');
   }
+  nameError.style.display = 'none'; // скрываем текст ошибки при вводе
 });
 
 emailInput.addEventListener('input', () => {
   if (isValidEmail(emailInput.value)) {
-    emailError.style.display = 'none';
     emailInput.classList.remove('error');
     emailInput.classList.add('valid');
   } else {
-    emailError.style.display = 'block';
     emailInput.classList.remove('valid');
     emailInput.classList.add('error');
   }
+  emailError.style.display = 'none'; // скрываем текст ошибки при вводе
 });
 
 telegramInput.addEventListener('input', () => {
   if (telegramInput.value.trim() !== "") {
-    telegramError.style.display = 'none';
     telegramInput.classList.remove('error');
     telegramInput.classList.add('valid');
   } else {
-    telegramError.style.display = 'block';
     telegramInput.classList.remove('valid');
     telegramInput.classList.add('error');
   }
+  telegramError.style.display = 'none'; // скрываем текст ошибки при вводе
 });
 
 // Сброс ошибок при клике вне формы
 document.addEventListener('click', (event) => {
   if (!form.contains(event.target)) {
-    form.querySelectorAll('.error-message').forEach(msg => {
-      msg.style.display = 'none';
+    [nameError, emailError, telegramError].forEach(error => {
+      error.style.display = 'none';
     });
-    form.querySelectorAll('.contacts__input').forEach(input => {
+    [nameInput, emailInput, telegramInput].forEach(input => {
       input.classList.remove('error');
     });
   }
 });
-
 
 
 
